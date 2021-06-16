@@ -1,4 +1,5 @@
 import tkinter as tk
+import gameplay
 
 
 # Simplified class for a button
@@ -13,34 +14,38 @@ class Button:
 		self.button.pack(expand=True, fill=tk.BOTH)
 
 
+# Simplified class for a text box
+class TextBox:
+	def __init__(self, parent: tk.Frame, x: int, y: int, width: int, height: int, text: str = "Default"):
+		self.frame = tk.Frame(parent, width=width, height=height)		# Set size
+		self.frame.place(x=x, y=y)										# Set pos
+		self.frame.propagate(False)										# Disable affecting parent size
+		self.text = tk.Text(self.frame)									# Create
+		self.text.insert(tk.END, "Hi")									# Set text
+		self.text.config(state=tk.DISABLED)								# Disable editing text by user
+		self.text.pack(expand=True, fill=tk.BOTH)						# Grow text box to fill frame
+
+
 # Function for creating the gui
-def gui():
-	# Create window
-	main_window = tk.Tk()													# Create
-	main_window.title("PyQuiz")												# Set title
-	main_window_frame = tk.Frame(main_window, width=640, height=480)		# Set size
-	main_window_frame.pack()
-	main_window.resizable(False, False)										# Disable resizing/maximising
+class GUI:
+	def __init__(self, game_play_data):
+		# Create window
+		self.main_window = tk.Tk()														# Create
+		self.main_window.title("PyQuiz")												# Set title
+		self.main_window_frame = tk.Frame(self.main_window, width=640, height=480)		# Set size
+		self.main_window_frame.pack()
+		self.main_window.resizable(False, False)										# Disable resizing/maximising
 
-	# Create text box inside its own frame so that we can set its size in pixels
-	question_text_frame = tk.Frame(main_window_frame, width=600, height=100)		# Set size
-	question_text_frame.place(x=20, y=20)											# Set pos
-	question_text_frame.propagate(False)											# Disable affecting parent size
-	question_text = tk.Text(question_text_frame)									# Create
-	question_text.insert(tk.END, "Hi")												# Set text
-	question_text.config(state=tk.DISABLED)											# Disable editing text by user
-	question_text.pack(expand=True, fill=tk.BOTH)															# Grow text box to fill frame
+		# Create question text box
+		self.question_text = TextBox(self.main_window_frame, 20, 20, 600, 100)
 
-	# Create buttons
-	buttons = [
-		Button(main_window_frame, 20, 140, 186, 100, "Button 1", lambda: print("Button 1")),
-		Button(main_window_frame, 226, 140, 186, 100, "Button 2", lambda: print("Button 2")),
-		Button(main_window_frame, 432, 140, 186, 100, "Button 3", lambda: print("Button 3"))
-	]
-	buttons[0].text.set("Hi")
-
-	main_window.mainloop()
+		# Create buttons
+		self.buttons = [
+			Button(self.main_window_frame, 20, 140, 186, 100, "Button 1", lambda: gameplay.click_answer(game_play_data, 0)),
+			Button(self.main_window_frame, 226, 140, 186, 100, "Button 2", lambda: gameplay.click_answer(game_play_data, 1)),
+			Button(self.main_window_frame, 432, 140, 186, 100, "Button 3", lambda: gameplay.click_answer(game_play_data, 2))
+		]
 
 
 if __name__ == "__main__":
-	gui()
+	GUI()
