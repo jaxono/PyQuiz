@@ -21,7 +21,7 @@ class TextBox:
 		self.frame.place(x=x, y=y)										# Set pos
 		self.frame.propagate(False)										# Disable affecting parent size
 		self.text = tk.Text(self.frame)									# Create
-		self.text.insert(tk.END, "Hi")									# Set text
+		self.text.insert(tk.END, "")									# Set text
 		self.text.config(state=tk.DISABLED)								# Disable editing text by user
 		self.text.pack(expand=True, fill=tk.BOTH)						# Grow text box to fill frame
 
@@ -32,12 +32,17 @@ class GUI:
 		# Create window
 		self.main_window = tk.Tk()														# Create
 		self.main_window.title("PyQuiz")												# Set title
-		self.main_window_frame = tk.Frame(self.main_window, width=640, height=480)		# Set size
+		self.main_window_frame = tk.Frame(self.main_window, width=640, height=540)		# Set size
 		self.main_window_frame.pack()
 		self.main_window.resizable(False, False)										# Disable resizing/maximising
 
 		# Create question text box
 		self.question_text = TextBox(self.main_window_frame, 20, 20, 600, 100)
+
+		# Create end note text box
+		self.end_note_text = TextBox(self.main_window_frame, 20, 260, 600, 100)
+
+		self.score_text = TextBox(self.main_window_frame, 20, 380, 600, 20)
 
 		# Create buttons
 		self.buttons = [
@@ -46,6 +51,8 @@ class GUI:
 			Button(self.main_window_frame, 432, 140, 186, 100, "Button 3", lambda: gameplay.click_answer(game_play_data, 2))
 		]
 
+		self.restart_button = Button(self.main_window_frame, 20, 420, 290, 100, "Restart", lambda: game_play_data.reset_game())
+
 
 if __name__ == "__main__":
-	GUI()
+	GUI(0)

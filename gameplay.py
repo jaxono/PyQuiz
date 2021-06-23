@@ -6,15 +6,28 @@ import random
 
 # A class that contains some variables from the gameplay function so that they can be shared across functions
 class GamePlayData:
+	gui: any
+
 	def __init__(self):
 		# Init vars
+		self.game_over = 0
 		self.score = 0
-		self.lives = 42069
+		self.lives = 3
 		self.correct_answer = 0
-		self.gui = 0
-		self.question_num = 0
+		self.question_num = -1
 		# Load questions
-		self.questions = decode_pqq.decode_pqq("test.pqq")
+		self.questions = decode_pqq.decode_pqq("questions.pqq")
+
+	def reset_game(self):
+		self.game_over = 0
+		self.score = 0
+		self.lives = 3
+		self.correct_answer = 0
+		new_question(self)
+
+		self.gui.score_text.text.config(state=tk.NORMAL)
+		self.gui.score_text.text.delete(1.0, tk.END)
+		self.gui.score_text.text.config(state=tk.DISABLED)
 
 
 # Function that will change the current question to another question and will change the gui interface elements to that of the question.
@@ -38,18 +51,39 @@ def new_question(game_play_data):
 
 # Function to call when a button is clicked
 def click_answer(game_play_data, button_num: int):
-	# Print/update correctness, score and lives remaining
-	print("")
-	if button_num == game_play_data.questions[game_play_data.question_num].correct_answer:
-		game_play_data.score += 1
-		print("Correct")
+	# Update correctness, score and lives remaining
+	correctness = "Incorrect"
+	if not game_play_data.game_over:
+		if button_num == game_play_data.questions[game_play_data.question_num].correct_answer:
+			game_play_data.score += 1
+			correctness = "Correct"
+		else:
+			game_play_data.lives -= 1
+	if game_play_data.lives < 0 or game_play_data.game_over:
+		game_play_data.game_over = 1
+		game_play_data.lives = 0
+		correctness = "Game Over"
+		for x in range(3):
+			game_play_data.gui.buttons[x].state = tk.DISABLED
+
+	# Update end note box
+	game_play_data.gui.end_note_text.text.config(state=tk.NORMAL)
+	game_play_data.gui.end_note_text.text.delete(1.0, tk.END)
+	if game_play_data.question_num != -1:
+		game_play_data.gui.end_note_text.text.insert(tk.END, game_play_data.questions[game_play_data.question_num].end_note)
 	else:
-		game_play_data.lives -= 1
-		print("Incorrect")
-	print("Score: {}, Lives: {}".format(game_play_data.score, game_play_data.lives))
+		game_play_data.gui.end_note_text.text.insert(tk.END, "")
+	game_play_data.gui.end_note_text.text.config(state=tk.DISABLED)
+
+	# Update scoreboard
+	game_play_data.gui.score_text.text.config(state=tk.NORMAL)
+	game_play_data.gui.score_text.text.delete(1.0, tk.END)
+	game_play_data.gui.score_text.text.insert(tk.END, "{}, Score: {}, Lives: {}".format(correctness, game_play_data.score, game_play_data.lives))
+	game_play_data.gui.score_text.text.config(state=tk.DISABLED)
 	
 	# Get a new question
-	new_question(game_play_data)
+	if not game_play_data.game_over:
+		new_question(game_play_data)
 
 
 # The initial function that sets up the game state

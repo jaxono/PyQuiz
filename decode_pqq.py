@@ -7,6 +7,7 @@ class Question:
 		self.correct_answer = 0
 		self.question = ""
 		self.answers = []
+		self.end_note = ""
 
 
 # States that the decoder can be in
@@ -14,6 +15,7 @@ class DecodeState(Enum):
 	QUESTION = 0
 	INCORRECT_ANSWER = 1
 	CORRECT_ANSWER = 2
+	END_NOTE = 3
 
 
 # Main decoder function
@@ -28,6 +30,8 @@ def decode_pqq(name: str):
 			current_question.answers.append(striped_current_string)
 			if decode_state == DecodeState.CORRECT_ANSWER:
 				current_question.correct_answer = len(current_question.answers) - 1
+		elif decode_state == DecodeState.END_NOTE:
+			current_question.end_note = striped_current_string
 
 	# Open the file and load the content to a string
 	file = open(name, "r", encoding="utf-8")
@@ -63,6 +67,11 @@ def decode_pqq(name: str):
 			end_string()
 			current_string = ""
 			decode_state = DecodeState.CORRECT_ANSWER
+
+		elif char == ">":
+			end_string()
+			current_string = ""
+			decode_state = DecodeState.END_NOTE
 
 		# Any other char will append the current string
 		else:
