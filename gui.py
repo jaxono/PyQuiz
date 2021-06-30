@@ -1,5 +1,6 @@
 import tkinter as tk
 import gameplay
+import tkinter.messagebox as tk_mb
 
 
 # Simplified class for a button
@@ -52,6 +53,7 @@ class GUI:
 		]
 
 		self.restart_button = Button(self.main_window_frame, 20, 420, 290, 100, "Restart", lambda: game_play_data.reset_game())
+		self.help_button = Button(self.main_window_frame, 330, 420, 290, 100, "Help", lambda: tk_mb.showinfo("Help", "Press one of the 3 questions below the question to select a question. If your question is correct you will gain a point else you will loose a life. If you loose 3 lives then it is game over and you will need to press the restart button."))
 
 
 if __name__ == "__main__":
